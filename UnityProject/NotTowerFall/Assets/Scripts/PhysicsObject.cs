@@ -7,17 +7,14 @@ public class PhysicsObject : MonoBehaviour
     // -------- PUBLIC VARIABLES -------- //
     public float gravityModifier = 1f;
     public float minGroundNormalY = 0.65f;
-    public float jumpForce = 3f;
 
 
     // -------- PRIVATE VARIABLES -------- //
-    private Vector2 velocity;
 
     // Components:
     private Rigidbody2D rb2d;
 
     // Collision Detection:
-    private bool grounded;
     private Vector2 groundNormal;
     private ContactFilter2D contactFilter;
     private RaycastHit2D[] hitBuffer = new RaycastHit2D[16];
@@ -25,8 +22,8 @@ public class PhysicsObject : MonoBehaviour
 
 
     // -------- PROTECTED VARIABLES -------- //
-
-    // Horizontal Movement:
+    protected Vector2 velocity;
+    protected bool grounded;
     protected Vector2 targetVelocity;
     
 
@@ -44,6 +41,17 @@ public class PhysicsObject : MonoBehaviour
         contactFilter.useTriggers = false;
         contactFilter.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer)); // use object settings for checking collisions
         contactFilter.useLayerMask = true;
+
+    }
+
+    void Update()
+    {
+        targetVelocity = Vector2.zero;
+        ComputeVelocity();
+    }
+
+    protected virtual void ComputeVelocity()
+    {
 
     }
 
@@ -66,12 +74,6 @@ public class PhysicsObject : MonoBehaviour
 
         Movement(move, true); // vertical movement
     }
-
-    protected void JUMP()
-    {
-        transform.position = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
-    }
-
     private void Movement(Vector2 move, bool yMovement)
     {
         float distance = move.magnitude;
